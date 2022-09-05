@@ -1,0 +1,19 @@
+.sign_up_card{
+  margin:10vh auto;
+  padding: 1rem;
+  max-width: 35vw;
+  min-height: 50vh;
+  align-items:center;
+  justify-content: center;
+  
+}
+
+.sign_up_body{
+ width: 100%;
+}
+
+.btn_sign_up{
+ width:100%;
+  margin: 1.5rem auto;
+}
+
