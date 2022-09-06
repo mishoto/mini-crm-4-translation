@@ -1,50 +1,55 @@
 import {
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
+import { auth } from '../../config/firebase';
 import React, { useState, useContext, useEffect } from 'react';
 
-const AuthContext = React.useContext();
+const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState();
-  const [appUser, setAppUser] = useState();
-
-  const createAppUser = (firstName, lastName, email, role) => {
-    return Object.create(
-      {},
-      {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        role: role,
-      },
-    );
-  };
 
   const signUpWithFirebase = (email, password) => {
-    return createUserWithEmailAndPassword(email, password);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const signInWithFirebase = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const signOutWithFirebase = () => {
+    return signOut(auth);
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log(user);
       setFirebaseUser(user);
-      setAppUser(user);
     });
-    return unsubscribe;
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  const value = {
-    signUpWithFirebase,
-    firebaseUser,
-    appUser,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        firebaseUser,
+        signUpWithFirebase,
+        signInWithFirebase,
+        signOutWithFirebase,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 const useAuthContext = () => {
   return useContext(AuthContext);
 };
 
-export { useAuthContext, AuthProvider };
+export { useAuthContext, AuthContext, AuthProvider };
