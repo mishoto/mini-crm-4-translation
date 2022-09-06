@@ -1,21 +1,38 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { useAuthContext } from '../../context/authContext';
 import style from './signUp.module.css';
 
 const SignUp = () => {
-  const firstName = useRef('');
+  const [appUser, setAppUser] = useState();
+  const firstName = useRef();
   const lastName = useRef();
   const email = useRef();
   const password = useRef();
   const passwordConfirm = useRef();
   const role = useRef();
-  const {signUpWithFirebase} = useAuthContext();
+  const { signUpWithFirebase } = useAuthContext();
+
+  const createAppUser = (firstName, lastName, email, role) => {
+    const newUser = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      role: role,
+    };
+    return newUser;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    signUpWithFirebase(firstName.current, password.current);
+    const currentUser = createAppUser(
+      firstName.current.value,
+      lastName.current.value,
+      email.current.value,
+      role.current.value,
+    );
+    setAppUser(currentUser);
+    signUpWithFirebase(email.current.value, password.current.value);
   };
 
   return (
@@ -23,7 +40,7 @@ const SignUp = () => {
       <Card className={style.sign_up_card}>
         <Card.Body className={style.sign_up_body}>
           <h3> Sign Up</h3>
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <Form.Group id='firstName'>
               <Form.Label>First Name</Form.Label>
               <Form.Control
@@ -47,6 +64,7 @@ const SignUp = () => {
               <Form.Control
                 type='password'
                 ref={password}
+                autoComplete='current-password'
                 required></Form.Control>
             </Form.Group>
             <Form.Group id='passwordConfirm'>
@@ -65,10 +83,7 @@ const SignUp = () => {
                 <option value={'admin'}>admin</option>
               </Form.Select>
             </Form.Group>
-            <Button
-              className={style.btn_sign_up}
-              type='submit'
-              onClick={(e) => handleSubmit(e)}>
+            <Button className={style.btn_sign_up} type='submit'>
               Sign Up
             </Button>
           </Form>
