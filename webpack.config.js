@@ -1,78 +1,86 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
-module.exports = {
-  output: {
-    publicPath: 'http://localhost:3030/',
+module.exports = (env) => {
+  return {
+    output: {
+      publicPath: 'http://localhost:3030/',
 
-    path: path.resolve(__dirname, './dist'),
-    assetModuleFilename: 'images/[hash][ext][query]',
-  },
+      path: path.resolve(__dirname, './dist'),
+      assetModuleFilename: 'images/[hash][ext][query]',
+    },
 
-  resolve: {
-    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
-  },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+    },
 
-  devServer: {
-    port: 3030,
-    historyApiFallback: true,
-    hot: true,
-  },
-  devtool: 'source-map',
+    devServer: {
+      port: 3030,
+      historyApiFallback: true,
+      hot: true,
+    },
+    devtool: 'source-map',
 
-  module: {
-    rules: [
-      {
-        test: /\.m?js/,
-        type: 'javascript/auto',
-        resolve: {
-          fullySpecified: false,
-        },
-      },
-      {
-        test: /\.(ts|tsx|js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
-      },
-      {
-        test: /\.(png|jpeg|jpg|gif|svg)$/,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-        exclude: /\.module\.css$/,
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
+    module: {
+      rules: [
+        {
+          test: /\.m?js/,
+          type: 'javascript/auto',
+          resolve: {
+            fullySpecified: false,
           },
-        ],
-        include: /\.module\.css$/,
-      },
-      {
-        test: /\.pdf$/,
-        use: ['file-loader'],
-      },
-    ],
-  },
+        },
+        {
+          test: /\.(ts|tsx|js|jsx)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+          },
+        },
+        {
+          test: /\.(png|jpeg|jpg|gif|svg)$/,
+          type: 'asset/resource',
+        },
+        {
+          test: /\.s[ac]ss$/i,
+          use: ['style-loader', 'css-loader', 'postcss-loader'],
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+          exclude: /\.module\.css$/,
+        },
+        {
+          test: /\.css$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 1,
+                modules: true,
+              },
+            },
+          ],
+          include: /\.module\.css$/,
+        },
+        {
+          test: /\.pdf$/,
+          use: ['file-loader'],
+        },
+      ],
+    },
 
-  plugins: [
-    new HtmlWebPackPlugin({
-      template: './src/index.html',
-    }),
-  ],
+    plugins: [
+      new HtmlWebPackPlugin({
+        template: './src/index.html',
+      }),
+      new Dotenv({
+       
+        allowEmptyValues: true,
+        systemvars: true,
+      }),
+    ],
+  };
 };
